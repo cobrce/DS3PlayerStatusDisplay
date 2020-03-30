@@ -61,7 +61,6 @@ Software/lib
 Software/.vs
 *.vcxproj
 *.filters
-*.sln
 *.suo
 *.sdf
 *.opensdf
