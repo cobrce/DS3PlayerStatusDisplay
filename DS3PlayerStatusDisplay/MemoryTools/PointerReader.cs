@@ -37,7 +37,7 @@ namespace DS3Stamina.MemoryTools
 
 			public readonly bool ErrorChain; // usually mean that the process is running but the 
 											 // pointers' offsets are invalid or not filled yet 
-											 // (example : reading playerbase of a gain while in main screen)
+											 // (example : reading the playerbase of a game while in main screen)
 			public object Value;
 			public ReadPtrStatus(object value)
 			{
@@ -64,11 +64,11 @@ namespace DS3Stamina.MemoryTools
 
 		public ReadPtrStatus Read(IntPtr hProcess, long ModuleBase)
 		{
-			byte[] buffer = new byte[8];
-			if (!WinAPIs.ReadProcessMemory(hProcess, (IntPtr)(ModuleBase + BaseAddress), buffer, buffer.Length, out IntPtr _))
+			IntPtr pointer = IntPtr.Zero;
+			if (!ReadPTR(hProcess, (IntPtr)(ModuleBase + BaseAddress),out pointer))
 				return new ReadPtrStatus(true);
 			else
-				return Next(hProcess, (IntPtr)BitConverter.ToInt64(buffer));
+				return Next(hProcess, pointer);
 		}
 
 		private static bool ReadPTR(IntPtr hProcess, IntPtr lpBaseAddress, out IntPtr value)
