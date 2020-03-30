@@ -49,6 +49,7 @@ namespace DS3Stamina
 					if (stamina == null || hp == null)
 					{
 						writer.Unlock();
+						prevHP = prevStamina = null;
 						continue;
 					}
 
