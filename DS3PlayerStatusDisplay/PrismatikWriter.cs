@@ -77,7 +77,7 @@ namespace DS3Stamina
 			{
 				string value = "";
 				if (i < nLeds / 2)
-					value = (i < staminaThreshold) ? (staminaRatio == 100.0 ? "0,230,0" : "70,255,30") : "0,0,0";
+					value = (staminaRatio == 0.0) ? "255,255,0" : ((i < staminaThreshold) ? (staminaRatio == 100.0 ? "0,230,0" : "70,255,30") : "0,0,0");
 				else
 					value = (i >= hpThreshold) ? (hpRatio == 100.0 ? "230,0,0" : "255,70,30") : "0,0,0";
 				messageBuilder.AppendFormat("{0}-{1};", ShiftLedPosition(i), value);

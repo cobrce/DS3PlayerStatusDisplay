@@ -11,7 +11,8 @@ namespace DS3Stamina.MemoryTools
 			Byte,
 			Word,
 			Dword,
-			Qword
+			Qword,
+			IntPtr
 		}
 		public PointerReader(long baseAddress, int[] offsets, TypeOfValue type)
 		{
@@ -51,23 +52,23 @@ namespace DS3Stamina.MemoryTools
 			}
 		}
 
+		public ReadPtrStatus Next(IntPtr hProcess, IntPtr previousPointer)
+		{
+			for (int i = 0; i < Offsets?.Length; i++)
+			{
+				if (!ReadPTR(hProcess, (IntPtr)previousPointer + Offsets[i], out previousPointer))
+					return new ReadPtrStatus(false, true);
+			}
+			return new ReadPtrStatus(Cast((long)previousPointer, Type));
+		}
 
 		public ReadPtrStatus Read(IntPtr hProcess, long ModuleBase)
 		{
 			byte[] buffer = new byte[8];
-			if (!WinAPIs.ReadProcessMemory(hProcess,(IntPtr)(ModuleBase + BaseAddress), buffer, buffer.Length, out IntPtr _))
+			if (!WinAPIs.ReadProcessMemory(hProcess, (IntPtr)(ModuleBase + BaseAddress), buffer, buffer.Length, out IntPtr _))
 				return new ReadPtrStatus(true);
 			else
-			{
-				IntPtr NextBase = (IntPtr)BitConverter.ToInt64(buffer);
-
-				for (int i = 0; i < Offsets?.Length; i++)
-				{
-					if (!ReadPTR(hProcess, (IntPtr)NextBase + Offsets[i], out NextBase))
-						return new ReadPtrStatus(false, true);
-				}
-				return new ReadPtrStatus(Cast((long)NextBase, Type));
-			}
+				return Next(hProcess, (IntPtr)BitConverter.ToInt64(buffer));
 		}
 
 		private static bool ReadPTR(IntPtr hProcess, IntPtr lpBaseAddress, out IntPtr value)
@@ -94,6 +95,8 @@ namespace DS3Stamina.MemoryTools
 					return (int)value;
 				case TypeOfValue.Qword:
 					return value;
+				case TypeOfValue.IntPtr:
+					return new IntPtr(value);
 				default:
 					return null;
 			}

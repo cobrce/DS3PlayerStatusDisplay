@@ -24,16 +24,20 @@ namespace DS3Stamina
 
 		const int XA = 0x1F90;
 
+		// player base
+		private readonly PointerReader PlayerBaseReader =
+			new PointerReader(0x4768E78, new int[] { 0x80, XA, 0x18 }, PointerReader.TypeOfValue.IntPtr);
+
 		// stamina
 		private readonly PointerReader StaminaPointerReader =
-			new PointerReader(0x4768E78, new int[] { 0x80, XA, 0x18, 0xF0 }, PointerReader.TypeOfValue.Dword);
+			new PointerReader(0, new int[] { 0xF0 }, PointerReader.TypeOfValue.Dword);
 		private readonly PointerReader MaxStaminaPointerReader =
-			new PointerReader(0x4768E78, new int[] { 0x80, XA, 0x18, 0xF4 }, PointerReader.TypeOfValue.Dword);
+			new PointerReader(0, new int[] { 0xF4 }, PointerReader.TypeOfValue.Dword);
 		// hp
 		private readonly PointerReader HPPointerReader =
-			new PointerReader(0x4768E78, new int[] { 0x80, XA, 0x18, 0xD8 }, PointerReader.TypeOfValue.Dword);
+			new PointerReader(0, new int[] { 0xD8 }, PointerReader.TypeOfValue.Dword);
 		private readonly PointerReader MaxHPPointerReader =
-			new PointerReader(0x4768E78, new int[] { 0x80, XA, 0x18, 0xDC }, PointerReader.TypeOfValue.Dword);
+			new PointerReader(0, new int[] { 0xDC }, PointerReader.TypeOfValue.Dword);
 
 
 
@@ -59,13 +63,17 @@ namespace DS3Stamina
 		{
 			try
 			{
-				var resultCurrent = currentValuePointReader.Read(hProcess, (long)process.MainModule.BaseAddress);
-				var resultMAX = maxValuePointerReader.Read(hProcess, (long)process.MainModule.BaseAddress);
-
-				if (!resultCurrent.ErrorFirstRead && !resultMAX.ErrorFirstRead)
+				var PB = PlayerBaseReader.Read(hProcess, (long)process.MainModule.BaseAddress);
+				if (!PB.ErrorFirstRead)
 				{
-					if (!resultCurrent.ErrorChain && !resultMAX.ErrorChain)
-						return new Gauge((int)resultCurrent.Value, (int)resultMAX.Value);
+					if (!PB.ErrorChain)
+					{
+						var resultCurrent = currentValuePointReader.Next(hProcess,(IntPtr)PB.Value );
+						var resultMAX = maxValuePointerReader.Next(hProcess, (IntPtr)PB.Value);
+
+						if (!resultCurrent.Error && !resultMAX.Error)
+							return new Gauge((int)resultCurrent.Value, (int)resultMAX.Value);
+					}
 				}
 				else
 				{
