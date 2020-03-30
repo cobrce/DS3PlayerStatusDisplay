@@ -10,9 +10,10 @@ namespace DS3Stamina
 		static void Main(string[] args)
 		{
 			Console.WriteLine("Darksouls3 player status display by COB\n" +
-				"Based on table bt \"The Grand Archives\"\n\n" +
+				"Based on CE table by \"The Grand Archives\"\n\n" +
 				"What does it do?\n" +
-				"It reads HP and SP from DarksoulsIII process and displays it with Prismatik\n" +
+				"It reads HP and SP from DarksoulsIII process and displays it in Ambilight using Prismatik\n\n" +
+				"Visit : https://github.com/cobrce/DS3PlayerStatusDisplay\n" +
 				"-----------------------------------------\n");
 
 			while (true)
