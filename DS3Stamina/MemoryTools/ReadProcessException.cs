@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DS3Stamina
+namespace DS3Stamina.MemoryTools
 {
 	class ReadProcessException : Exception
 	{

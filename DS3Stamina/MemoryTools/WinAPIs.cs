@@ -4,7 +4,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace DS3Stamina
+namespace DS3Stamina.MemoryTools
 {
 	class WinAPIs
 	{
